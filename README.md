@@ -24,12 +24,17 @@ Hoppefully, *MT7628 UARTLITE* has a 16550-compatible register set; except for
 [Divisor Latch register](#UART_DLR). Thus, it is possible to reuse *debug_ll*
 headers from *barebox* to write a simple implemention of [puts](puts.c).
 
-- [puts.c](puts.c)
-- [putc.h](putc.h)
-- [debug_ll.h](debug_ll.h)
-- [include/board/debug_ll.h](include/board/debug_ll.h)
-- [include/mach/debug_ll.h](include/board/debug_ll.h)
-- [include/asm/debug_ll_ns16550.h](include/asm/debug_ll_ns16550.h)
+- [puts.c](puts.c): basic *C* implementation of `puts()` using `putc()`.
+- [putc.h](putc.h): basic *C* implementation of `putc()` using barebox
+  `putc_ll()`.
+- [include/debug_ll.h](include/debug_ll.h): barebox *C* implementation of
+  `putc_ll()` using `PUTC_LL()`.
+- [include/mach/debug_ll.h](include/mach/debug_ll.h): *MT7628* header joining
+  both "VoCore 2" and *Low-Level NS16550* headers.
+- [include/board/debug_ll.h](include/board/debug_ll.h): *VoCore 2* header
+  defining `DEBUG_LL_UART_*` macros for *Low-Level NS16550* header.
+- [include/asm/debug_ll_ns16550.h](include/asm/debug_ll_ns16550.h): barebox
+  *MIPS assembler* and *C* implementation of `PUTC_LL`.
 
 Connect to the board through USB `picocom -b 115200 /dev/ttyACM0`, then reboot
 the system `reboot -f` to enter the boot command line interface by holding the
@@ -78,12 +83,12 @@ tftp ${loadaddr} helloworld.img; bootm ${loadaddr}
 > done
 > Bytes transferred = 4194600 (400128 hex)
 > NetBootFileXferSize= 00400128
-> ## Booting image at 80100000 ...
+> \## Booting image at 80100000 ...
 >    Image Name:   Standelone Image
 >    Image Type:   MIPS U-Boot Standalone Program (uncompressed)
 >    Data Size:    4194536 Bytes =  4 MB
->    Load Address: 00000000
->    Entry Point:  00000000
+>    Load Address: 80000000
+>    Entry Point:  80000000
 >    Verifying Checksum ... OK
 > OK
 > Hello, World!
@@ -163,6 +168,22 @@ The effective clock enable generated is 16 x the required baud rate.
 |115200|6|14|28|
 
 Divisor needed to generate a given baud rate.
+
+## Misc
+
+### UART2 info from OpenWRT
+
+> root@OpenWrt:/# cat /sys/class/tty/ttyS2/iomem_base
+> 0x10000E00
+
+> root@OpenWrt:/# cat /sys/class/tty/ttyS2/iomem_reg_shift
+> 2
+
+> root@OpenWrt:/# cat /sys/class/tty/ttyS2/uartclk
+> 40000000
+
+> root@OpenWrt:/# devmem 0x10000E04
+> 0x00000005
 
 [0]: http://vocore.io/
 [1]: http://www.barebox.org/
