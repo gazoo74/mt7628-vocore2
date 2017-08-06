@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "debug_ll.h"
+#include <debug_ll.h>
 
 static inline int putc(int c)
 {

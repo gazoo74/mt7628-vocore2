@@ -34,7 +34,7 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
 CPPFLAGS += -D__KERNEL__
 CPPFLAGS += -DCONFIG_HAS_DEBUG_LL -DCONFIG_DEBUG_LL -DCONFIG_BAUDRATE=115200
 CFLAGS += -std=gnu99
-CFLAGS += -Werror -Wextra
+CFLAGS += -Wall -Werror -Wextra
 CFLAGS += -nostdinc
 CFLAGS += -Iinclude
 CFLAGS += -fno-builtin

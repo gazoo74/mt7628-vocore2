@@ -32,4 +32,6 @@ int puts(const char *s)
 		putc(*s);
 		s++;
 	}
+
+	return 0;
 }
