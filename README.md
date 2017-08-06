@@ -21,7 +21,7 @@ by u-boot.
 available at address [0x10000E00](#memory-map-summary).
 
 Hoppefully, *MT7628 UARTLITE* has a 16550-compatible register set; except for
-[Divisor Latch register](#UART_DLR). Thus, it is possible to reuse *debug_ll*
+[Divisor Latch register](#uart-dlr). Thus, it is possible to reuse *debug_ll*
 headers from *barebox* to write a simple implemention of [puts](puts.c).
 
 - [puts.c](puts.c): basic *C* implementation of `puts()` using `putc()`.
@@ -96,8 +96,7 @@ tftp ${loadaddr} helloworld.img; bootm ${loadaddr}
 
 # Appendix
 
-[=#memory-map-summary]
-## Memory Map Summary
+## [Memory Map Summary](=#memory-map-summary)
 
 |Start|End|Size|Description|
 |---:|:---|---:|:---|
@@ -146,8 +145,7 @@ tftp ${loadaddr} helloworld.img; bootm ${loadaddr}
 
 ## UARTLITE
 
-[=#UART_DLR]
-### UARTn+0004h - Divisor Latch (MS) Register
+### [UARTn+0004h - Divisor Latch (MS) Register](=#uart-dlr)
 
 The table below shows the divisor needed to generate a given baud rate from CLK
 inputs of 13, 26 MHz and 52MHz.
