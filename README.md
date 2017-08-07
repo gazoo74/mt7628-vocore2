@@ -8,21 +8,21 @@ The goal of this project is to bring the support for the [VoCore 2][0] board to
 The first step is to use [u-boot][2] as it already knows how to setup up the
 *MT7628* SoC.
 
-### Hello, World image
+### Hello, World u-boot standalone image
 
 The [helloworld](helloworld.c) u-boot standalone image is the very first step
 for the board bring-up.
 
-It demostrates it is possible to run a standalone demo image that prints the
+It demonstrates it is possible to run a standalone demo image that prints the
 traditional *Hello, World!* string using the *UART Lite* serial which was set up
 by u-boot.
 
 *VoCore 2* logs data through the *UARTLITE2* serial port. This serial port is
 available at address [0x10000E00](#memory-map-summary).
 
-Hoppefully, *MT7628 UARTLITE* has a 16550-compatible register set; except for
+Hopefully, *MT7628 UARTLITE* has a 16550-compatible register set; except for
 [Divisor Latch register](#uart-dlr). Thus, it is possible to reuse *debug_ll*
-headers from *barebox* to write a simple implemention of [puts](puts.c).
+headers from *barebox* to write a simple implementation of [puts](puts.c).
 
 - [puts.c](puts.c): basic *C* implementation of `puts()` using `putc()`.
 - [putc.h](putc.h): basic *C* implementation of `putc()` using barebox
