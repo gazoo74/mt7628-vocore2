@@ -20,21 +20,27 @@ by u-boot.
 *VoCore 2* logs data through the *UARTLITE2* serial port. This serial port is
 available at address [0x10000E00](#memory-map-summary).
 
-Hopefully, *MT7628 UARTLITE* has a 16550-compatible register set; except for
+#### The sources
+
+Hopefully, *MT7628 UARTLITE* has a *16550-compatible* register set; except for
 [Divisor Latch register](#uart-dlr). Thus, it is possible to reuse *debug_ll*
 headers from *barebox* to write a simple implementation of [puts](puts.c).
 
+- [helloworld.c](helloworld.c): *C* demo that prints `Hello, World!` using
+  `puts()`.
 - [puts.c](puts.c): basic *C* implementation of `puts()` using `putc()`.
 - [putc.h](putc.h): basic *C* implementation of `putc()` using barebox
   `putc_ll()`.
 - [include/debug_ll.h](include/debug_ll.h): barebox *C* implementation of
   `putc_ll()` using `PUTC_LL()`.
 - [include/mach/debug_ll.h](include/mach/debug_ll.h): *MT7628* header joining
-  both "VoCore 2" and *Low-Level NS16550* headers.
+  both *VoCore 2* and *Low-Level NS16550* headers.
 - [include/board/debug_ll.h](include/board/debug_ll.h): *VoCore 2* header
-  defining `DEBUG_LL_UART_*` macros for *Low-Level NS16550* header.
+  defining `DEBUG_LL_UART_*` macros used by *Low-Level NS16550* header.
 - [include/asm/debug_ll_ns16550.h](include/asm/debug_ll_ns16550.h): barebox
   *MIPS assembler* and *C* implementation of `PUTC_LL`.
+
+#### Run it
 
 Connect to the board through USB `picocom -b 115200 /dev/ttyACM0`, then reboot
 the system `reboot -f` to enter the boot command line interface by holding the
@@ -42,57 +48,75 @@ the system `reboot -f` to enter the boot command line interface by holding the
 
 Copy `helloworld.img` and run it using command `bootm`.
 
-```
-tftp ${loadaddr} helloworld.img; bootm ${loadaddr}
-```
+The trace below shows it is possible to run `helloworld.img` u-boot image and
+reuse what has been set earlier by u-boot.
 
-> VoCore2 > tftp ${loadaddr} helloworld.img; bootm ${loadaddr}
-> 
->  netboot_common, argc= 3 
-> 
->  KSEG1ADDR(NetTxPacket) = 0xA7FB3240 
-> 
->  NetLoop,call eth_halt ! 
-> 
->  NetLoop,call eth_init ! 
-> 
->  ETH_STATE_ACTIVE!! 
-> Using Eth0 (10/100-M) device
-> TFTP from server 192.168.1.3; our IP address is 192.168.1.123
-> Filename 'helloworld.img'.
-> 
->  TIMEOUT_COUNT=10,Load address: 0x80100000
-> Loading: Got ARP REQUEST, return our IP
-> Got ARP REQUEST, return our IP
-> Got ARP REQUEST, return our IP
-> Got ARP REPLY, set server/gtwy eth addr (3c:97:0e:ca:48:43)
-> Got it
-> #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 #################################################################
-> 	 ########################################
-> done
-> Bytes transferred = 4194600 (400128 hex)
-> NetBootFileXferSize= 00400128
-> \## Booting image at 80100000 ...
->    Image Name:   Standelone Image
->    Image Type:   MIPS U-Boot Standalone Program (uncompressed)
->    Data Size:    4194536 Bytes =  4 MB
->    Load Address: 80000000
->    Entry Point:  80000000
->    Verifying Checksum ... OK
-> OK
-> Hello, World!
-> VoCore2 > 
+```
+VoCore2 > tftp ${loadaddr} helloworld.img; bootm ${loadaddr}
+
+ netboot_common, argc= 3 
+
+ KSEG1ADDR(NetTxPacket) = 0xA7FB3240 
+
+ NetLoop,call eth_halt ! 
+
+ NetLoop,call eth_init ! 
+
+ Waitting for RX_DMA_BUSY status Start... done
+
+
+ ETH_STATE_ACTIVE!! 
+Using Eth0 (10/100-M) device
+TFTP from server 192.168.1.3; our IP address is 192.168.1.123
+Filename 'helloworld.img'.
+
+ TIMEOUT_COUNT=10,Load address: 0x80100000
+Loading: checksum bad
+checksum bad
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REQUEST, return our IP
+Got ARP REPLY, set server/gtwy eth addr (xx:xx:xx:xx:xx:xx)
+Got it
+#################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 #################################################################
+	 ########################################
+done
+Bytes transferred = 4194600 (400128 hex)
+NetBootFileXferSize= 00400128
+## Booting image at 80100000 ...
+   Image Name:   Standelone Image
+   Image Type:   MIPS U-Boot Standalone Program (uncompressed)
+   Data Size:    4194536 Bytes =  4 MB
+   Load Address: 80000000
+   Entry Point:  80000000
+   Verifying Checksum ... OK
+OK
+Hello, World!
+VoCore2 > 
+```
 
 # Appendix
 
@@ -166,22 +190,6 @@ The effective clock enable generated is 16 x the required baud rate.
 |115200|6|14|28|
 
 Divisor needed to generate a given baud rate.
-
-## Misc
-
-### UART2 info from OpenWRT
-
-> root@OpenWrt:/# cat /sys/class/tty/ttyS2/iomem_base
-> 0x10000E00
-
-> root@OpenWrt:/# cat /sys/class/tty/ttyS2/iomem_reg_shift
-> 2
-
-> root@OpenWrt:/# cat /sys/class/tty/ttyS2/uartclk
-> 40000000
-
-> root@OpenWrt:/# devmem 0x10000E04
-> 0x00000005
 
 [0]: http://vocore.io/
 [1]: http://www.barebox.org/
