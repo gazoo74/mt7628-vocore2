@@ -17,8 +17,15 @@ It demonstrates it is possible to run a standalone demo image that prints the
 traditional *Hello, World!* string using the *UART Lite* serial which was set up
 by u-boot.
 
-*VoCore 2* logs data through the *UARTLITE2* serial port. This serial port is
-available at address [0x10000E00](#memory-map-summary).
+#### Console device
+
+*VoCore 2* logs data through the *UARTLITE2* serial port.
+
+This serial port is available thanks to the *USB* power-supply cable connected
+to the host through the `/dev/ttyACMx` device.
+
+*UART* is really important as it is the only thing available to debug easily
+using the quick'n dirty `printf()` method.
 
 #### The sources
 
@@ -39,6 +46,8 @@ headers from *barebox* to write a simple implementation of [puts](puts.c).
   defining `DEBUG_LL_UART_*` macros used by *Low-Level NS16550* header.
 - [include/asm/debug_ll_ns16550.h](include/asm/debug_ll_ns16550.h): barebox
   *MIPS assembler* and *C* implementation of `PUTC_LL`.
+
+*UARTLITE 2* serial is available at address [0x10000E00](#memory-map-summary).
 
 #### Run it
 

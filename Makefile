@@ -35,9 +35,9 @@ CPPFLAGS += -D__KERNEL__
 CPPFLAGS += -DCONFIG_HAS_DEBUG_LL -DCONFIG_DEBUG_LL -DCONFIG_BAUDRATE=115200
 CFLAGS += -std=gnu99
 CFLAGS += -Wall -Werror -Wextra
+CFLAGS += -ffreestanding
 CFLAGS += -nostdinc
 CFLAGS += -Iinclude
-CFLAGS += -fno-builtin
 CLFAGS += -mabi=32 -march=mips32r2
 LDFLAGS += -Ttext $(TEXT_BASE)
 LDFLAGS += -nostdlib
